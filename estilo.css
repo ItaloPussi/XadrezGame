@@ -1,0 +1,92 @@
+body{
+	background: lightgrey;
+	color:red;
+	overflow: hidden;
+}
+#board{
+	height:600px;
+	width: 660px;
+	background: white;
+	margin: 0 auto;
+}
+#eatblack{
+	display: inline-block;
+	height: 600px;
+	width: 30px;
+	float:left;
+	background: lightgrey;
+
+}
+
+#eatwhite{
+	display: inline-block;
+	height: 600px;
+	width: 30px;
+	float:right;
+	background: lightgrey;
+}
+.square{
+	box-sizing: border-box;
+	height: 75px;
+	width:75px;
+	display: inline-block;
+	background-size: 75px 75px;
+	background-position: center;
+}
+.square:hover{
+	border: 3px solid red;
+}
+.active{
+	border: 3px solid green;
+}
+.column{
+	width:75px;
+	height: 600px;
+	float:left;
+}
+.square{
+	background-color: #783201;
+}
+.alternate >.square:nth-child(even),.normal >.square:nth-child(odd){
+	background-color: #fff;
+}
+
+.pb{
+	background-image: url(img/pb.png);
+	
+}
+.pw{
+	background-image: url(img/pw.png);
+
+}
+.rb{
+	background-image: url(img/rb.png);
+
+}
+.rw{
+	background-image: url(img/rw.png);
+}
+.hb{
+	background-image: url(img/hb.png);
+}
+.hw{
+	background-image: url(img/hw.png);
+}
+.bb{
+	background-image: url(img/bb.png)
+}
+.bw{
+	background-image: url(img/bw.png)
+}
+.qb{
+	background-image: url(img/qb.png)
+}
+.qw{
+	background-image: url(img/qw.png)
+}
+.kb{
+	background-image: url(img/kb.png)
+}
+.kw{
+	background-image: url(img/kw.png)
+}
