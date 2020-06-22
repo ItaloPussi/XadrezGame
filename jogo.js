@@ -1,34 +1,34 @@
-//inicia algumas variáveis principais
-	var possibilities = Array();
-	var general = Array();
-	var capture = Array();
+//inicia algumas letiáveis principais
+	let possibilities = Array();
+	let general = Array();
+	let capture = Array();
 
-	var follow = true;
-	var peao_jogado = false;
+	let follow = true;
+	let peao_jogado = false;
 
-	var previous_player = '';
-	var previous_move = '';
+	let previous_player = '';
+	let previous_move = '';
 
-	var verify;
-	var auxId;
-	var color_aux;
+	let verify;
+	let auxId;
+	let color_aux;
 
-	var i_anterior;
-	var controle_danos = false;
+	let i_anterior;
+	let controle_danos = false;
 
 	//Variáveis relacionadas ao Rockie
-	var rockie = Array();
+	let rockie = Array();
 	 rockie['white'] = [true,'18','88'];
 	 rockie['black'] = [true,'11','81'];
 
 
-	 var elements = document.getElementsByClassName('square'); 
+	 let elements = document.getElementsByClassName('square'); 
 
 	
 //-------------------------------------------------------------------------------------------------------------
 // ✓ Função para limpar seleções anteriores
 	function clean(){
-		for(var i = 0;i<=63;i++){
+		for(let i = 0;i<=63;i++){
 			elements[i].classList.remove('active');
 		}
 		
@@ -36,10 +36,10 @@
 //-------------------------------------------------------------------------------------------------------------
 // ✓ Função para ordenar o Array;
 	function order(){
-		var k = possibilities.filter((este, a) => possibilities.indexOf(este) ===a)
+		let k = possibilities.filter((este, a) => possibilities.indexOf(este) ===a)
 		if(k.indexOf("")!=-1){
-			var q = k.indexOf("");
-			var l = k.splice(q,1)
+			let q = k.indexOf("");
+			let l = k.splice(q,1)
 		}
 		possibilities=k;
 	}
@@ -47,7 +47,7 @@
 // ✓ Função para  quando o jogador errar
 
 	function error(){
-		var audio = new Audio('fail.mp3');
+		let audio = new Audio('fail.mp3');
 				audio.addEventListener('canplaythrough', function() {
 					
 				  audio.play();
@@ -60,7 +60,7 @@
 //--------------------------------------------------------------------------------------------------------------
 // ✓ função de calculo de areas possíveis para peças de movimento unico
 	function calc(item){
-			var calc = parseInt(auxId) + item;
+			let calc = parseInt(auxId) + item;
 			
 			if(calc>10 && calc<89){
 				possibilities.push(calc);
@@ -69,11 +69,11 @@
 		}
 // ✓ função de calculo de areas possíveis para peças de movimento em linha
 	function calc2(value, index){
-			var aux7 = value;
-			var aux8 = auxId;
-			var aux9 = parseInt(aux8) + parseInt(value);
-			var continue_calc = true;
-			var continue_calc2 = true;
+			let aux7 = value;
+			let aux8 = auxId;
+			let aux9 = parseInt(aux8) + parseInt(value);
+			let continue_calc = true;
+			let continue_calc2 = true;
 			while(continue_calc == true){
 				
 				while(continue_calc2 == true){
@@ -95,7 +95,7 @@
 
 	function eatpiece(id,a){
 		document.getElementById(id).classList.remove(a)
-		var img = document.createElement("IMG");
+		let img = document.createElement("IMG");
 		img.src = "img/"+a+".png";
      	img.style.width = "30px";
     	img.style.height = "30px";
@@ -105,15 +105,15 @@
 //--------------------------------------------------------------------------------------------------------------
 // ✓ Função responsável pela movimentação das peças
 	function toMove(id_square, possibilities,color){
-		var id = id_square;
-		var aux3 = general["piece"]
+		let id = id_square;
+		let aux3 = general["piece"]
 
 		if(possibilities.indexOf(parseInt(id)) != -1){
 		
 			previous_player = general["color"]
 			document.getElementById(previous_move).classList.remove(general["piece"])
      		
-			var a = document.getElementById(id).classList[1]
+			let a = document.getElementById(id).classList[1]
 			a != 'active' ? eatpiece(id,a) : true;
 			if(a =='kb' ||a== 'kw'){
 				location.reload();
@@ -121,11 +121,11 @@
 
 			//Conferências relacionadas a possibilidades de Rockie
 			if((previous_move == 18 || previous_move == 88) && general["piece"] == 'rw'){
-				var aux10 = rockie['white'].indexOf(previous_move)
+				let aux10 = rockie['white'].indexOf(previous_move)
 				rockie['white'][aux10] = '';
 			}
 			if((previous_move == 11 || previous_move == 81) && general["piece"] == 'rb'){
-				var aux10 = rockie['black'].indexOf(previous_move)
+				let aux10 = rockie['black'].indexOf(previous_move)
 				rockie['black'][aux10] = '';
 			}
 
@@ -183,11 +183,11 @@
 	function principal(id){
 		// ✓ limpa quaisquer seleções anteriores, coleta o elemento e 'seleciona' o local clicado
 			clean()
-			var piece = document.getElementById(id);
+			let piece = document.getElementById(id);
 			piece.classList.add('active');
 		//------------------------------------------------------------------------------------------------------
 		// ✓ identifica qual peça foi clicada e sua respectiva cor	
-			var identify_piece = piece.classList;
+			let identify_piece = piece.classList;
 			identify_piece = identify_piece[1];
 			identify_piece = identify_piece.split("")
 		//------------------------------------------------------------------------------------------------------	
@@ -199,7 +199,7 @@
 		//------------------------------------------------------------------------------------------------------	
 		// ✓ Caso o jogador opte por comer a peça adversária
 			if(follow === false && identify_piece[0] != 'a'){
-				var aux11 = document.getElementById(previous_move);
+				let aux11 = document.getElementById(previous_move);
 				aux11 = aux11.classList[1];
 				aux11 = aux11[1]
 				if(aux11 === identify_piece[1]){
@@ -218,7 +218,7 @@
 				return false;
 			}
 		//------------------------------------------------------------------------------------------------------		
-		// ✓ Limpa e prepara algumas variáveis
+		// ✓ Limpa e prepara algumas letiáveis
 		if(identify_piece[0]!='a'){
 			possibilities = []
 			auxId = id;
@@ -275,7 +275,7 @@
 			}
 		}
 
-		var aux = [-12,8,19,-21,12,-8,-19,21]
+		let aux = [-12,8,19,-21,12,-8,-19,21]
 		aux.forEach(calc)
 		possibilities.forEach(check_horse)	
 
@@ -310,7 +310,7 @@
 		}
 		
 		if(color == 'b'){
-			var aux = [1,2,11,-9]
+			let aux = [1,2,11,-9]
 			id[1]!=2 ? aux[1] = 1 : true;
 
 			aux.forEach(calc)
@@ -319,7 +319,7 @@
 			general["piece"] = 'pb';
 			general["color"] = 'b';	
 		}else{
-			var aux = [-1,-2,-11,9]
+			let aux = [-1,-2,-11,9]
 			id[1]!=7 ? aux[1] = -1 : true;
 
 			aux.forEach(calc)
@@ -337,7 +337,7 @@
 		
 
 		color_aux = color;
-		var aux = [9,-9,11,-11]
+		let aux = [9,-9,11,-11]
 		aux.forEach(calc2)
 
 		if(color == 'b'){
@@ -356,7 +356,7 @@
 		
 
 		color_aux = color;
-		var aux = [1,-1,10,-10]
+		let aux = [1,-1,10,-10]
 		aux.forEach(calc2)
 
 		if(color == 'b'){
@@ -373,7 +373,7 @@
 	function queen(id,color){
 		
 		color_aux = color;
-		var aux = [1,-1,9,-9,10,-10,11,-11]
+		let aux = [1,-1,9,-9,10,-10,11,-11]
 		aux.forEach(calc2)
 
 		if(color == 'b'){
@@ -406,7 +406,7 @@
 			}
 		}
 
-		var aux = [1,-1,9,-9,10,-10,11,-11]		
+		let aux = [1,-1,9,-9,10,-10,11,-11]		
 		aux.forEach(calc)
 		possibilities.forEach(check_king)
 
