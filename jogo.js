@@ -1,50 +1,97 @@
-//inicia algumas letiáveis principais
+	for(let i = 1;i<=8;i++){
+		let ref
+		let nova
+		let elemento
+		if(i % 2 !=0){
+			ref = document.getElementById('eatwhite')
+			nova =document.createElement('div')
+			nova.className+='column columni normal'
+		}else{
+			ref = document.getElementById('eatwhite')
+			nova =document.createElement('div')
+			nova.className+='column columni alternate'
+		}
+		
+			for(let j = 1;j<=8;j++){
+				elemento = document.createElement('div')
+				elemento.className+='square '
+				elemento.id+=`${i}${j}`
+				elemento.onclick = ()=>{principal(`${i}${j}`)}
+
+				if(j == 2){
+					elemento.className+='pb'
+				}else if(j ==7){
+					elemento.className+='pw'
+				}else if(j==1 && (i==1 || i ==8)){
+					elemento.className+='rb'
+				}else if(j==8 && (i==1 || i ==8)){
+					elemento.className+='rw'
+				}else if(j==1 && (i==2 || i ==7)){
+					elemento.className+='hb'
+				}else if(j==8 && (i==2 || i ==7)){
+					elemento.className+='hw'
+				}else if(j==1 && (i==3 || i ==6)){
+					elemento.className+='bb'
+				}else if(j==8 && (i==3 || i ==6)){
+					elemento.className+='bw'
+				}else if(j==1 && i==5){
+					elemento.className+='kb'
+				}else if(j==8 && i==5){
+					elemento.className+='kw'
+				}else if(j==1 && i==4){
+					elemento.className+='qb'
+				}else if(j==8 && i==4){
+					elemento.className+='qw'
+				}
+				nova.appendChild(elemento)
+			}
+		let parentDiv = document.getElementById('board')
+		parentDiv.insertBefore(nova,ref)
+					
+	}
+
 	let possibilities = Array();
 	let general = Array();
-	let capture = Array();
+	let emptySquareSelected
 
-	let follow = true;
+	let capture = false;
 	let peao_jogado = false;
 
 	let previous_player = '';
-	let previous_move = '';
+	let previousMove = '';
 
 	let verify;
-	let auxId;
+	let selectedID;
 	let color_aux;
 
-	let i_anterior;
-	let controle_danos = false;
-
-	//Variáveis relacionadas ao Rockie
 	let rockie = Array();
 	 rockie['white'] = [true,'18','88'];
 	 rockie['black'] = [true,'11','81'];
 
 
-	 let elements = document.getElementsByClassName('square'); 
+	 let squares = document.getElementsByClassName('square'); 
 
 	
 //-------------------------------------------------------------------------------------------------------------
-// ✓ Função para limpar seleções anteriores
+// ✓ clear previous selections
 	function clean(){
-		for(let i = 0;i<=63;i++){
-			elements[i].classList.remove('active');
+		for(let square = 0;square<=63;square++){
+			squares[square].classList.remove('active');
 		}
 		
 	}
 //-------------------------------------------------------------------------------------------------------------
-// ✓ Função para ordenar o Array;
+// Função para ordenar o Array;
 	function order(){
 		let k = possibilities.filter((este, a) => possibilities.indexOf(este) ===a)
-		if(k.indexOf("")!=-1){
-			let q = k.indexOf("");
+		if(k.indexOf('')!=-1){
+			let q = k.indexOf('');
 			let l = k.splice(q,1)
 		}
 		possibilities=k;
 	}
 //-------------------------------------------------------------------------------------------------------------
-// ✓ Função para  quando o jogador errar
+// Função para  quando o(s) jogadores errarem determinado movimento
 
 	function error(){
 		let audio = new Audio('fail.mp3');
@@ -52,25 +99,25 @@
 					
 				  audio.play();
 				});
-		previous_move = '';
+		previousMove = '';
 		clean()
-		follow = true;
+		capture = false;
 
 	}
 //--------------------------------------------------------------------------------------------------------------
-// ✓ função de calculo de areas possíveis para peças de movimento unico
+// função de calculo de areas possíveis para peças de movimento unico 
 	function calc(item){
-			let calc = parseInt(auxId) + item;
+			let calc = parseInt(selectedID) + item;
 			
 			if(calc>10 && calc<89){
 				possibilities.push(calc);
 				
 			}
 		}
-// ✓ função de calculo de areas possíveis para peças de movimento em linha
+// função de calculo de areas possíveis para peças de movimento em linha
 	function calc2(value, index){
 			let aux7 = value;
-			let aux8 = auxId;
+			let aux8 = selectedID;
 			let aux9 = parseInt(aux8) + parseInt(value);
 			let continue_calc = true;
 			let continue_calc2 = true;
@@ -81,7 +128,7 @@
 					if(verify != null && verify.classList[1] == undefined ) {
 						possibilities.push(aux9)
 					}else{
-						if(verify != null && verify.classList[1].split("")[1] != color_aux){
+						if(verify != null && verify.classList[1].split('')[1] != color_aux){
 							possibilities.push(aux9)
 						}
 						continue_calc2 = false;
@@ -95,62 +142,62 @@
 
 	function eatpiece(id,a){
 		document.getElementById(id).classList.remove(a)
-		let img = document.createElement("IMG");
-		img.src = "img/"+a+".png";
-     	img.style.width = "30px";
-    	img.style.height = "30px";
+		let img = document.createElement('IMG');
+		img.src = 'img/'+a+'.png';
+     	img.style.width = '30px';
+    	img.style.height = '30px';
 
-     	a[1]=="b" ? document.getElementById('eatwhite').appendChild(img) : document.getElementById('eatblack').appendChild(img);
+     	a[1]=='b' ? document.getElementById('eatwhite').appendChild(img) : document.getElementById('eatblack').appendChild(img);
 	}
 //--------------------------------------------------------------------------------------------------------------
-// ✓ Função responsável pela movimentação das peças
-	function toMove(id_square, possibilities,color){
-		let id = id_square;
-		let aux3 = general["piece"]
+// Função responsável pela movimentação das peças
+	function toMove(selectedSquareID, possibilities,color){
+		selectedSquareID = selectedSquareID;
+		let aux3 = general['piece']
 
-		if(possibilities.indexOf(parseInt(id)) != -1){
+		if(possibilities.indexOf(parseInt(selectedSquareID)) != -1){
 		
-			previous_player = general["color"]
-			document.getElementById(previous_move).classList.remove(general["piece"])
+			previous_player = general['color']
+			document.getElementById(previousMove).classList.remove(general['piece'])
      		
-			let a = document.getElementById(id).classList[1]
-			a != 'active' ? eatpiece(id,a) : true;
+			let a = document.getElementById(selectedSquareID).classList[1]
+			a != 'active' ? eatpiece(selectedSquareID,a) : true;
 			if(a =='kb' ||a== 'kw'){
 				location.reload();
 			}
 
 			//Conferências relacionadas a possibilidades de Rockie
-			if((previous_move == 18 || previous_move == 88) && general["piece"] == 'rw'){
-				let aux10 = rockie['white'].indexOf(previous_move)
+			if((previousMove == 18 || previousMove == 88) && general['piece'] == 'rw'){
+				let aux10 = rockie['white'].indexOf(previousMove)
 				rockie['white'][aux10] = '';
 			}
-			if((previous_move == 11 || previous_move == 81) && general["piece"] == 'rb'){
-				let aux10 = rockie['black'].indexOf(previous_move)
+			if((previousMove == 11 || previousMove == 81) && general['piece'] == 'rb'){
+				let aux10 = rockie['black'].indexOf(previousMove)
 				rockie['black'][aux10] = '';
 			}
 
-			document.getElementById(id).classList.add(general["piece"]);
-			if((id == 28 || id == 78) && general["piece"] == 'kw' && rockie['white'][0]==true ){
-				id = parseInt(id);
-				id == 28 ? id -=10 : id+=10;
-				document.getElementById(id).classList.remove('rw');
-				id == 18 ? id+=20 : id-=20;
-				document.getElementById(id).classList.add('rw');
+			document.getElementById(selectedSquareID).classList.add(general['piece']);
+			if((selectedSquareID == 28 || selectedSquareID == 78) && general['piece'] == 'kw' && rockie['white'][0]==true ){
+				selectedSquareID = parseInt(selectedSquareID);
+				selectedSquareID == 28 ? selectedSquareID -=10 : selectedSquareID+=10;
+				document.getElementById(selectedSquareID).classList.remove('rw');
+				selectedSquareID == 18 ? selectedSquareID+=20 : selectedSquareID-=20;
+				document.getElementById(selectedSquareID).classList.add('rw');
 				rockie['white'] = [];
 			}
-			if((id == 21 || id == 71) && general["piece"] == 'kb' && rockie['black'][0]==true ){
-				id = parseInt(id);
-				id == 21 ? id -=10 : id+=10;
-				document.getElementById(id).classList.remove('rb');
-				id == 11 ? id+=20 : id-=20;
-				document.getElementById(id).classList.add('rb');
+			if((selectedSquareID == 21 || selectedSquareID == 71) && general['piece'] == 'kb' && rockie['black'][0]==true ){
+				selectedSquareID = parseInt(selectedSquareID);
+				selectedSquareID == 21 ? selectedSquareID -=10 : selectedSquareID+=10;
+				document.getElementById(selectedSquareID).classList.remove('rb');
+				selectedSquareID == 11 ? selectedSquareID+=20 : selectedSquareID-=20;
+				document.getElementById(selectedSquareID).classList.add('rb');
 				rockie['black'] = [];
 			}
 
-			if(general["piece"] == 'kb'){
+			if(general['piece'] == 'kb'){
 				rockie['black'][0] = false;
 			}
-			if(general["piece"] == 'kw'){
+			if(general['piece'] == 'kw'){
 				rockie['white'][0] = false;
 			}
 
@@ -159,15 +206,15 @@
 			if(aux3 == 'pb' || aux3 == 'pw'){
 				peao_jogado = true;
 			}
-					possibilities = []
+			possibilities = []
 
 		}else{
 
 			error()
 		}
-		if((aux3 == 'pb' || aux3 == 'pw') && (id.split("")[1] == 8 || id.split("")[1] == 1) && peao_jogado == true){
-			document.getElementById(id).classList.remove(aux3);
-			id.split("")[1] == 8 ? document.getElementById(id).classList.add("qb") : document.getElementById(id).classList.add("qw");
+		if((aux3 == 'pb' || aux3 == 'pw') && (selectedSquareID.split('')[1] == 8 || selectedSquareID.split('')[1] == 1) && peao_jogado == true){
+			document.getElementById(selectedSquareID).classList.remove(aux3);
+			selectedSquareID.split('')[1] == 8 ? document.getElementById(selectedSquareID).classList.add('qb') : document.getElementById(selectedSquareID).classList.add('qw');
 			clean();
 		}
 		color_aux = '';
@@ -175,91 +222,93 @@
 		clean();
 		general = [];
 		peao_jogado = false;
-		previous_move = '';
-		follow= true;
+		previousMove = '';
+		capture= false;
 	}
 //--------------------------------------------------------------------------------------------------------------
-// ✓ Função principal responsável pelas informações iniciais e direcionamento para funções auxiliares
-	function principal(id){
-		// ✓ limpa quaisquer seleções anteriores, coleta o elemento e 'seleciona' o local clicado
+// Função principal responsável pelas informações iniciais e direcionamento para funções auxiliares
+	function principal(selectedSquareID){
+		// ✓ clears any previous selections, collects the element and 'selects' the clicked location
 			clean()
-			let piece = document.getElementById(id);
-			piece.classList.add('active');
+			let selectedSquare = document.getElementById(selectedSquareID);
+			selectedSquare.classList.add('active');
 		//------------------------------------------------------------------------------------------------------
-		// ✓ identifica qual peça foi clicada e sua respectiva cor	
-			let identify_piece = piece.classList;
-			identify_piece = identify_piece[1];
-			identify_piece = identify_piece.split("")
+		// ✓ identifies which piece was clicked and its color	
+			let identifyPiece = selectedSquare.classList;
+			identifyPiece = identifyPiece[1];
+			let [initialPieceCharacter, color]= identifyPiece.split('')
+			initialPieceCharacter === 'a' ? emptySquareSelected = true : emptySquareSelected = false
 		//------------------------------------------------------------------------------------------------------	
-		// ✓ identifica se o jogador está clicando repetivamente no mesmo local
-			if(previous_move == id){
-				error();
+		// ✓ identifies whether the player is repeatedly clicking on the same location
+			if(previousMove == selectedSquareID){
 				return false;
 			}
 		//------------------------------------------------------------------------------------------------------	
-		// ✓ Caso o jogador opte por comer a peça adversária
-			if(follow === false && identify_piece[0] != 'a'){
-				let aux11 = document.getElementById(previous_move);
-				aux11 = aux11.classList[1];
-				aux11 = aux11[1]
-				if(aux11 === identify_piece[1]){
+		// ✓ if the player chooses to eat the opposing piece
+			if(capture === true && !emptySquareSelected){
+				let previousPiece = document.getElementById(previousMove);
+				previousPiece = previousPiece.classList[1];
+				let previousColor = previousPiece[1]
+				if(previousColor === color){
 					error()
 					return false;
 				}else{
-					toMove(id, possibilities,identify_piece[1])
+					toMove(selectedSquareID, possibilities,color)
 					return false;
 				}
 		
 			}
 		//------------------------------------------------------------------------------------------------------		
-		// ✓ verificações se é o jogador correto que está jogando
-			if((identify_piece[1] == 'b' && previous_player == '') || (identify_piece[1] == previous_player)  || (previous_move == "" && identify_piece[1] == 'c')){
+		// verificações se é o jogador correto que está jogando
+			if((color== 'b' && previous_player == '') || (color == previous_player)  || (previousMove == '' && emptySquareSelected)){
 			 	error();
 				return false;
 			}
 		//------------------------------------------------------------------------------------------------------		
-		// ✓ Limpa e prepara algumas letiáveis
-		if(identify_piece[0]!='a'){
-			possibilities = []
-			auxId = id;
-			previous_move= id;
+		// ✓ Cleans and prepares some variables
+			if(!emptySquareSelected){
+				possibilities = []
+				selectedID = selectedSquareID;
+				previousMove= selectedSquareID;
 
-		}
+			}
 		//------------------------------------------------------------------------------------------------------
-		// ✓ Identifica a peça clicada e redireciona para sua respectiva função
-			switch(identify_piece[0]){
+		// ✓  Identifies the clicked part and redirects it to its respective function
+			switch(initialPieceCharacter){
 				case 'r':
-					rook(id,identify_piece[1]);
+					rook(selectedSquareID,color);
 					break;
 				case 'h':
-					horse(id,identify_piece[1]);
+					horse(selectedSquareID,color);
 					break;
 				case 'b':
-					bishop(id,identify_piece[1]);
+					bishop(selectedSquareID,color);
 					break;
 				case 'k':
-					king(id,identify_piece[1]);
+					king(selectedSquareID,color);
 					break;
 				case 'q':
-					queen(id,identify_piece[1]);
+					queen(selectedSquareID,color);
 					break;
 				case 'p':
-					pawn(id,identify_piece[1]);
+					pawn(selectedSquareID,color);
 					break;
-				case 'a':
-					follow = true;
-					toMove(id, possibilities,identify_piece[1]);
+				default:
+					capture = false;
+					toMove(selectedSquareID, possibilities,color);
 					break;
 			}
 		//------------------------------------------------------------------------------------------------------
-		//Verifica se há possibilidades de movimentação
-		if(identify_piece[0]!='a' && possibilities.length==0){
-			error();
-			return false;
-		}
+		// ✓ Checks for movement possibilities
+			if(!emptySquareSelected && possibilities.length==0){
+				error();
+				return false;
+			}
+		//------------------------------------------------------------------------------------------------------
+
 	}
 //--------------------------------------------------------------------------------------------------------------
-// ✓ Função Cavalo
+// Função Cavalo
 	function horse(id,color){
 		function check_horse(value, index){
 			verify = document.getElementById(value) != null ? document.getElementById(value).classList : true;
@@ -269,7 +318,7 @@
 			if(verify[1] == undefined){
 				return false
 			}
-			if(verify[1].split("")[1] == color){
+			if(verify[1].split('')[1] == color){
 				possibilities[index] = '';
 				
 			}
@@ -279,18 +328,13 @@
 		aux.forEach(calc)
 		possibilities.forEach(check_horse)	
 
-		if(color == 'b'){
-			general["piece"] = 'hb';
-			general["color"] = 'b';
-		}else{
-			general["piece"] = 'hw';
-			general["color"] = 'w';
-		}
-		follow = false;
+		general['piece'] = 'h'+color
+		general['color'] = color
+		capture = true;
 		order()
 	}
 //--------------------------------------------------------------------------------------------------------------
-// ✓ Função peão
+// Função peão
 	function pawn(id,color){
 		function check_pawn(value, index){
 			verify = document.getElementById(value) != null ? document.getElementById(value).classList : true;
@@ -303,36 +347,29 @@
 				possibilities[1] = '';
 				return false;
 			}
-			if(index >1 && (verify[1] == undefined || verify[1].split("") ==color)){
+			if(index >1 && (verify[1] == undefined || verify[1].split('') ==color)){
 				possibilities[index] = '';
 				return false;
 			}
 		}
-		
+		let aux
 		if(color == 'b'){
-			let aux = [1,2,11,-9]
+			aux = [1,2,11,-9]
 			id[1]!=2 ? aux[1] = 1 : true;
 
-			aux.forEach(calc)
-			possibilities.forEach(check_pawn)
-	 		
-			general["piece"] = 'pb';
-			general["color"] = 'b';	
 		}else{
-			let aux = [-1,-2,-11,9]
+			aux = [-1,-2,-11,9]
 			id[1]!=7 ? aux[1] = -1 : true;
-
-			aux.forEach(calc)
-			possibilities.forEach(check_pawn)
-
-			general["piece"] = 'pw';
-			general["color"] = 'w';
 		}
-		follow = false;
+		aux.forEach(calc)
+		possibilities.forEach(check_pawn)
+		general['piece'] = 'p'+color
+		general['color'] = color
+		capture = true;
 		order()
 	}
 //--------------------------------------------------------------------------------------------------------------
-// ✓ Movimentação do bispo
+// Movimentação do bispo
 	function bishop(id,color){
 		
 
@@ -340,18 +377,13 @@
 		let aux = [9,-9,11,-11]
 		aux.forEach(calc2)
 
-		if(color == 'b'){
-			general["piece"] = 'bb';
-			general["color"] = 'b';
-		}else{
-			general["piece"] = 'bw';
-			general["color"] = 'w';
-		}
-		follow = false;
+		general['piece'] = 'b'+color
+		general['color'] = color
+		capture = true;
 
 	}
 //--------------------------------------------------------------------------------------------------------------
-// ✓ Movimentação da torre
+// Movimentação da torre
 	function rook(id,color){
 		
 
@@ -359,32 +391,21 @@
 		let aux = [1,-1,10,-10]
 		aux.forEach(calc2)
 
-		if(color == 'b'){
-			general["piece"] = 'rb';
-			general["color"] = 'b';
-		}else{
-			general["piece"] = 'rw';
-			general["color"] = 'w';
-		}
-		follow = false;
+		general['piece'] = 'r'+color
+		general['color'] = color
+		capture = true;
 	}
 //--------------------------------------------------------------------------------------------------------------
-// ✓ Movimentação da rainha
+// Movimentação da rainha
 	function queen(id,color){
 		
 		color_aux = color;
 		let aux = [1,-1,9,-9,10,-10,11,-11]
 		aux.forEach(calc2)
 
-		if(color == 'b'){
-			general["piece"] = 'qb';
-			general["color"] = 'b';
-		}else{
-			general["piece"] = 'qw';
-			general["color"] = 'w';
-
-		}
-		follow = false;
+		general['piece'] = 'q'+color
+		general['color'] = color
+		capture = true;
 
 	}
 //-------------------------------------------------------------------------------------------------------------
@@ -400,7 +421,7 @@
 			if(verify[1] == undefined){
 				return false;
 			}
-			if(verify[1].split("")[1] == color){
+			if(verify[1].split('')[1] == color){
 				possibilities[index] = '';
 				
 			}
@@ -422,8 +443,6 @@
 				color_aux = 'b';
 
 			}
-			general["piece"] = 'kb';
-			general["color"] = 'b';
 		}else{
 			if(rockie['white'][0] == true &&(rockie['white'][1] != '' || rockie['white'][2] != '')){
 				if(document.getElementById(78).classList[1] == undefined && document.getElementById(68).classList[1] == undefined ){
@@ -436,10 +455,10 @@
 				color_aux = 'w';
 
 			}
-			general["piece"] = 'kw';
-			general["color"] = 'w';
 		}
-		follow = false;
+		general['piece'] = 'k'+color
+		general['color'] = color
+		capture = true;
 		order()
 
 	}
