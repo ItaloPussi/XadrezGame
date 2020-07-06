@@ -1,54 +1,56 @@
+function createBoard(){
+	let reference = document.getElementById('eatwhite');
+	let parentDiv = document.getElementById('board');
+	let newColumn;
+	let element;
 	for(let i = 1;i<=8;i++){
-		let ref
-		let nova
-		let elemento
+		newColumn =document.createElement('div');
+		newColumn.className+='column columni ';
+
 		if(i % 2 !=0){
-			ref = document.getElementById('eatwhite')
-			nova =document.createElement('div')
-			nova.className+='column columni normal'
+			newColumn.className+='normal'
 		}else{
-			ref = document.getElementById('eatwhite')
-			nova =document.createElement('div')
-			nova.className+='column columni alternate'
+			newColumn.className+='alternate'
 		}
 		
 			for(let j = 1;j<=8;j++){
-				elemento = document.createElement('div')
-				elemento.className+='square '
-				elemento.id+=`${i}${j}`
-				elemento.onclick = ()=>{principal(`${i}${j}`)}
+				element = document.createElement('div');
+				element.className+='square ';
+				element.id+=`${i}${j}`;
+				element.onclick = ()=>{principal(`${i}${j}`)};
 
 				if(j == 2){
-					elemento.className+='pb'
+					element.className+='pb'
 				}else if(j ==7){
-					elemento.className+='pw'
+					element.className+='pw'
 				}else if(j==1 && (i==1 || i ==8)){
-					elemento.className+='rb'
+					element.className+='rb'
 				}else if(j==8 && (i==1 || i ==8)){
-					elemento.className+='rw'
+					element.className+='rw'
 				}else if(j==1 && (i==2 || i ==7)){
-					elemento.className+='hb'
+					element.className+='hb'
 				}else if(j==8 && (i==2 || i ==7)){
-					elemento.className+='hw'
+					element.className+='hw'
 				}else if(j==1 && (i==3 || i ==6)){
-					elemento.className+='bb'
+					element.className+='bb'
 				}else if(j==8 && (i==3 || i ==6)){
-					elemento.className+='bw'
+					element.className+='bw'
 				}else if(j==1 && i==5){
-					elemento.className+='kb'
+					element.className+='kb'
 				}else if(j==8 && i==5){
-					elemento.className+='kw'
+					element.className+='kw'
 				}else if(j==1 && i==4){
-					elemento.className+='qb'
+					element.className+='qb'
 				}else if(j==8 && i==4){
-					elemento.className+='qw'
+					element.className+='qw'
 				}
-				nova.appendChild(elemento)
+				newColumn.appendChild(element)
 			}
-		let parentDiv = document.getElementById('board')
-		parentDiv.insertBefore(nova,ref)
+		parentDiv.insertBefore(newColumn,reference)
 					
 	}
+}
+createBoard()
 
 	let possibilities = Array();
 	let general = Array();
@@ -63,6 +65,7 @@
 	let verify;
 	let selectedID;
 	let color_aux;
+	let aux;
 
 	let rockie = Array();
 	 rockie['white'] = [true,'18','88'];
@@ -91,63 +94,63 @@
 		possibilities=k;
 	}
 //-------------------------------------------------------------------------------------------------------------
-// Função para  quando o(s) jogadores errarem determinado movimento
-
+// ✓  Error sound and reset some let's
 	function error(){
 		let audio = new Audio('fail.mp3');
-				audio.addEventListener('canplaythrough', function() {
-					
-				  audio.play();
-				});
+			audio.addEventListener('canplaythrough', function() {		
+			audio.play();
+		});
 		previousMove = '';
 		clean()
 		capture = false;
 
 	}
 //--------------------------------------------------------------------------------------------------------------
-// função de calculo de areas possíveis para peças de movimento unico 
-	function calc(item){
-			let calc = parseInt(selectedID) + item;
+// ✓ calculates movement possibilities for single movement pieces
+	function singleMovementCalc(item){
+		let possibilityID = parseInt(selectedID) + item;
+		
+		if(document.getElementById(possibilityID) !=null){
+			possibilities.push(possibilityID);
 			
-			if(calc>10 && calc<89){
-				possibilities.push(calc);
-				
-			}
 		}
+	}
+//--------------------------------------------------------------------------------------------------------------
 // função de calculo de areas possíveis para peças de movimento em linha
-	function calc2(value, index){
-			let aux7 = value;
-			let aux8 = selectedID;
-			let aux9 = parseInt(aux8) + parseInt(value);
-			let continue_calc = true;
-			let continue_calc2 = true;
-			while(continue_calc == true){
-				
-				while(continue_calc2 == true){
-					verify = document.getElementById(aux9)
-					if(verify != null && verify.classList[1] == undefined ) {
+	function rowMovementCalc(value, index){
+		let aux7 = value;
+		let aux8 = selectedID;
+		let aux9 = parseInt(aux8) + parseInt(value);
+		let continue_calc = true;
+		let continue_calc2 = true;
+		while(continue_calc == true){
+			
+			while(continue_calc2 == true){
+				verify = document.getElementById(aux9)
+				if(verify != null && verify.classList[1] == undefined ) {
+					possibilities.push(aux9)
+				}else{
+					if(verify != null && verify.classList[1].split('')[1] != general['color']){
 						possibilities.push(aux9)
-					}else{
-						if(verify != null && verify.classList[1].split('')[1] != color_aux){
-							possibilities.push(aux9)
-						}
-						continue_calc2 = false;
 					}
-					aux9+= value;
+					continue_calc2 = false;
 				}
-				continue_calc = false;
-
+				aux9+= value;
 			}
-		}
+			continue_calc = false;
 
-	function eatpiece(id,a){
-		document.getElementById(id).classList.remove(a)
+		}
+	}
+//--------------------------------------------------------------------------------------------------------------
+// ✓ remove the eaten piece and put it on the list
+	function eatpiece(squareID,eatenPiece){
+		document.getElementById(squareID).classList.remove(eatenPiece)
 		let img = document.createElement('IMG');
-		img.src = 'img/'+a+'.png';
+		img.src = 'img/'+eatenPiece+'.png';
      	img.style.width = '30px';
     	img.style.height = '30px';
 
-     	a[1]=='b' ? document.getElementById('eatwhite').appendChild(img) : document.getElementById('eatblack').appendChild(img);
+     	eatenPiece[1]=='b' ? document.getElementById('eatwhite').appendChild(img) : document.getElementById('eatblack').appendChild(img);
 	}
 //--------------------------------------------------------------------------------------------------------------
 // Função responsável pela movimentação das peças
@@ -274,6 +277,11 @@
 			}
 		//------------------------------------------------------------------------------------------------------
 		// ✓  Identifies the clicked part and redirects it to its respective function
+			if(initialPieceCharacter!='a'){
+				general['color'] = color;
+				capture = true;
+
+			}
 			switch(initialPieceCharacter){
 				case 'r':
 					rook(selectedSquareID,color);
@@ -311,10 +319,8 @@
 // Função Cavalo
 	function horse(id,color){
 		function check_horse(value, index){
-			verify = document.getElementById(value) != null ? document.getElementById(value).classList : true;
-			if(verify == true){
-				possibilities[index] = '';
-			}
+			verify = document.getElementById(value).classList
+
 			if(verify[1] == undefined){
 				return false
 			}
@@ -324,20 +330,18 @@
 			}
 		}
 
-		let aux = [-12,8,19,-21,12,-8,-19,21]
-		aux.forEach(calc)
+		aux = [-12,8,19,-21,12,-8,-19,21]
+		aux.forEach(singleMovementCalc)
 		possibilities.forEach(check_horse)	
 
 		general['piece'] = 'h'+color
-		general['color'] = color
-		capture = true;
 		order()
 	}
 //--------------------------------------------------------------------------------------------------------------
 // Função peão
 	function pawn(id,color){
 		function check_pawn(value, index){
-			verify = document.getElementById(value) != null ? document.getElementById(value).classList : true;
+			verify = document.getElementById(value) !=null &&document.getElementById(value).classList;
 			if(index == 0 && verify[1] != undefined){
 				possibilities[0] = '';
 				possibilities[1] = '';
@@ -361,62 +365,47 @@
 			aux = [-1,-2,-11,9]
 			id[1]!=7 ? aux[1] = -1 : true;
 		}
-		aux.forEach(calc)
+		aux.forEach(singleMovementCalc)
 		possibilities.forEach(check_pawn)
 		general['piece'] = 'p'+color
-		general['color'] = color
-		capture = true;
 		order()
 	}
 //--------------------------------------------------------------------------------------------------------------
-// Movimentação do bispo
+// bishop movimentation
 	function bishop(id,color){
 		
-
-		color_aux = color;
-		let aux = [9,-9,11,-11]
-		aux.forEach(calc2)
-
 		general['piece'] = 'b'+color
-		general['color'] = color
-		capture = true;
+
+		aux = [9,-9,11,-11]
+		aux.forEach(rowMovementCalc)
 
 	}
 //--------------------------------------------------------------------------------------------------------------
 // Movimentação da torre
 	function rook(id,color){
 		
-
-		color_aux = color;
-		let aux = [1,-1,10,-10]
-		aux.forEach(calc2)
-
 		general['piece'] = 'r'+color
-		general['color'] = color
-		capture = true;
+
+		aux = [1,-1,10,-10]
+		aux.forEach(rowMovementCalc)
+
+		
 	}
 //--------------------------------------------------------------------------------------------------------------
 // Movimentação da rainha
 	function queen(id,color){
-		
-		color_aux = color;
-		let aux = [1,-1,9,-9,10,-10,11,-11]
-		aux.forEach(calc2)
 
 		general['piece'] = 'q'+color
-		general['color'] = color
-		capture = true;
+
+		aux = [1,-1,9,-9,10,-10,11,-11]
+		aux.forEach(rowMovementCalc)
 
 	}
 //-------------------------------------------------------------------------------------------------------------
-// ✓Função rei
+// Função rei
 	function king(id,color){
 		function check_king(value, index){
-			verify = document.getElementById(value) != null ? document.getElementById(value).classList : true;
-			if(document.getElementById(value) ==null){
-				possibilities[index] = '';
-				return false;
-			}
+			verify = document.getElementById(value).classList;
 
 			if(verify[1] == undefined){
 				return false;
@@ -427,8 +416,8 @@
 			}
 		}
 
-		let aux = [1,-1,9,-9,10,-10,11,-11]		
-		aux.forEach(calc)
+		aux = [1,-1,9,-9,10,-10,11,-11]		
+		aux.forEach(singleMovementCalc)
 		possibilities.forEach(check_king)
 
 		if(color == 'b'){
@@ -457,8 +446,6 @@
 			}
 		}
 		general['piece'] = 'k'+color
-		general['color'] = color
-		capture = true;
 		order()
 
 	}
