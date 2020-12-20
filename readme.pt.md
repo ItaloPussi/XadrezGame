@@ -1,6 +1,6 @@
 # Xadrez Game
 
-<a href="https://github.com/ItaloPussi/simpleGamesJS/blob/master/readme.md">English Version</a> 👈
+<a href="https://github.com/ItaloPussi/XadrezGame/blob/master/readme.md">English Version</a> 👈
 
 Nesse repositório você encontrá um jogo de xadrez completo e funcional, com geração dinâmica de tabuleiro em JS.
 
